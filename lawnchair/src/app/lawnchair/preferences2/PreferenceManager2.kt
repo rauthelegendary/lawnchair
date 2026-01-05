@@ -701,6 +701,37 @@ class PreferenceManager2 private constructor(private val context: Context) :
         defaultValue = false,
     )
 
+    // ES-DE integration
+    val esdeMediaFolder = preference(
+        key = stringPreferencesKey("esde_media_folder"),
+        defaultValue = ""
+    )
+
+    val esdeIconSize = preference(
+        key = intPreferencesKey("esde_icon_size"),
+        defaultValue = 96
+    )
+
+    val esdeIconGravity = preference(
+        key = stringPreferencesKey("esde_icon_gravity"),
+        defaultValue = "top_start"
+    )
+
+    val esdeIconMargin = preference(
+        key = intPreferencesKey("esde_icon_margin"),
+        defaultValue = 16
+    )
+
+    val esdeDimAmount = preference(
+        key = floatPreferencesKey("esde_dim_amount"),
+        defaultValue = 0.8f
+    )
+
+    val esdeDefaultImage = preference(
+        key = stringPreferencesKey("esde_default_image"),
+        defaultValue = ""
+    )
+
     val doubleTapGestureHandler = serializablePreference<GestureHandlerConfig>(
         key = stringPreferencesKey("double_tap_gesture_handler"),
         defaultValue = GestureHandlerConfig.Sleep,

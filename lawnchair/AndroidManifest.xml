@@ -70,6 +70,17 @@
             </intent-filter>
         </activity>
 
+        <!-- EDITED FOR ES-DE INTEGRATION! Also, not sure which permission to ask for -->
+        <receiver
+            android:name="app.lawnchair.esde.EsdeCommandReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="app.lawnchair.action.SET_GAME_SELECTED" />
+                <action android:name="app.lawnchair.action.SET_SYSTEM_SELECTED" />
+            </intent-filter>
+        </receiver>
+
+
         <activity
             android:name="com.android.launcher3.secondarydisplay.SecondaryDisplayLauncher"
             tools:node="remove" />

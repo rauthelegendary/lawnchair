@@ -38,6 +38,10 @@ import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.data.AppDatabase
 import app.lawnchair.data.wallpaper.service.WallpaperService
+import app.lawnchair.esde.ui.BackgroundOverlay
+import app.lawnchair.esde.EsdeController
+import app.lawnchair.esde.EsdeService
+import app.lawnchair.esde.ui.initUiUtils
 import app.lawnchair.factory.LawnchairWidgetHolder
 import app.lawnchair.gestures.GestureController
 import app.lawnchair.gestures.VerticalSwipeTouchController
@@ -128,7 +132,6 @@ class LawnchairLauncher : QuickstepLauncher() {
                 -> {
                     LawnchairApp.instance.restoreClockInStatusBar()
                 }
-
                 else -> {
                     workspace.updateStatusbarClock()
                 }
@@ -146,8 +149,29 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
     }
 
+    //ADDED FOR ES-DE INTEGRATION, need to hide the metadata panel when we open the app drawer and such
+    private val esdeMetadataStateListener =
+        object : StateManager.StateListener<LauncherState> {
+            override fun onStateTransitionStart(toState: LauncherState) {
+                when (toState) {
+                    is BackgroundAppState,
+                    is OverviewState,
+                    is AllAppsState, -> {
+                        backgroundOverlay.hideMetadata()
+                    }
+                    else -> {
+                        backgroundOverlay.showMetadata()
+                    }
+                }
+            }
+            override fun onStateTransitionComplete(finalState: LauncherState) {}
+        }
+
     private lateinit var colorScheme: ColorScheme
     private var hasBackGesture = false
+
+    //ADDED FOR ES-DE INTEGRATION
+    private lateinit var backgroundOverlay: BackgroundOverlay
 
     val gestureController by unsafeLazy { GestureController(this) }
 
@@ -169,6 +193,7 @@ class LawnchairLauncher : QuickstepLauncher() {
             defaultOverlay.setEnableFeed(enable)
         }.launchIn(scope = lifecycleScope)
         launcher.stateManager.addStateListener(clearSearchStateListener)
+        launcher.stateManager.addStateListener(esdeMetadataStateListener)
 
         if (prefs.autoLaunchRoot.get()) {
             lifecycleScope.launch {
@@ -228,7 +253,10 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
         val isWorkspaceDarkText = Themes.getAttrBoolean(this, R.attr.isWorkspaceDarkText)
         preferenceManager2.darkStatusBar.onEach(launchIn = lifecycleScope) { darkStatusBar ->
-            systemUiController.updateUiState(UI_STATE_BASE_WINDOW, isWorkspaceDarkText || darkStatusBar)
+            systemUiController.updateUiState(
+                UI_STATE_BASE_WINDOW,
+                isWorkspaceDarkText || darkStatusBar
+            )
         }
         preferenceManager2.backPressGestureHandler.onEach(launchIn = lifecycleScope) { handler ->
             hasBackGesture = handler !is GestureHandlerConfig.NoOp
@@ -246,6 +274,22 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
 
         colorScheme = themeProvider.colorScheme
+
+        //////ADDED FOR ES-DE INTEGRATION
+        initUiUtils(this)
+
+        EsdeService.processGamelists()
+        EsdeService.processSystems()
+
+        backgroundOverlay = BackgroundOverlay.attach(this)
+        backgroundOverlay.addTouchRequiredViews(dragLayer)
+
+        lifecycleScope.launch {
+            EsdeController.state.collect { bg ->
+                backgroundOverlay.displayState(bg)
+            }
+        }
+        //////ES-DE INTEGRATION ENDS HERE
 
         showQuickstepWarningIfNecessary()
 
