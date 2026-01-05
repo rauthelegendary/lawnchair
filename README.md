@@ -1,6 +1,6 @@
 # Lawnchair 15
 
-##ES-DE Integration
+## ES-DE Integration
 This fork of Lawnchair is specifically designed for use with ES-DE and a dual screen Android device like the AYN Thor, turning ES-DE into a psuedo dual screen emulator launcher. It is not ready for release.
 
 Implementation:
