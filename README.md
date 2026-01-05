@@ -6,6 +6,11 @@ This fork of Lawnchair is specifically designed for use with ES-DE and a dual sc
 Implementation:
 ES-DE allows for scripts to run on certain events, these scripts send an intent to Lawnchair which will then use the variables passed to retrieve the correct image and metadata. Both system and game metadata is cached at launch, images are only cached for systems. Game images are loaded as required. Currently the intents are started through a su command requiring root (and will only work for the debug version of Lawnchair), but non-root alternatives should be available. 
 
+For reference, the additions/changes are contained to the following:
+-lawnchair/src/app/lawnchair/esde (all files within folder)
+-lawnchair/src/app/lawnchair/LawnchairLauncher.kt (additions made to register UI elements, display elements and start service)
+-lawnchair/AndroidManifest.xml (two intents added)
+
 [![Build debug APK](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/ci.yml/badge.svg)](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/ci.yml)
 [![Build release APK](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/release_update.yml/badge.svg)](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/release_update.yml)
 [![Crowdin](https://badges.crowdin.net/e/188ba69d884418987f0b7f1dd55e3a4e/localized.svg)](https://lawnchair.crowdin.com/lawnchair)
